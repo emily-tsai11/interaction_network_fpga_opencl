@@ -44,7 +44,7 @@ def get_input(graph):
     return O, Rs, Rr, Ra, y
 
 
-data_path = '/tigress/aheintz/data'
+data_path = '/tigress/et7417/data'
 
 args = parse_args()
 with open(args.config) as f:

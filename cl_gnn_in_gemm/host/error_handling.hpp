@@ -1,7 +1,9 @@
 #include <iostream>
 
-const char *getErrorString(cl_int error){
-    switch(error){
+const char* getErrorString(cl_int error)
+{
+    switch(error)
+	{
         // run-time and JIT compiler errors
         case 0: return "CL_SUCCESS";
         case -1: return "CL_DEVICE_NOT_FOUND";
@@ -76,10 +78,12 @@ const char *getErrorString(cl_int error){
     }
 }
 
-inline void checkErr(cl_int error, const int line){
-    if (error != CL_SUCCESS) {
-        std::cerr << "ERROR: " <<  getErrorString(error)  << std::endl;
-        std::cerr << "At line: " <<  line  << std::endl;
+inline void checkErr(cl_int error, const int line)
+{
+    if(error != CL_SUCCESS)
+	{
+        std::cerr << "ERROR: " << getErrorString(error) << std::endl;
+        std::cerr << "At line: " << line << std::endl;
         cleanup();
         exit(EXIT_FAILURE);
     }

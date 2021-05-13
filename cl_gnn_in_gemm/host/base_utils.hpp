@@ -119,59 +119,72 @@ vector<dtype> flatten(const vector<vector<dtype>> &orig)
 {
     vector<dtype> ret;
     for(const auto &v: orig)
-        ret.insert(ret.end(), v.begin(), v.end());
+		ret.insert(ret.end(), v.begin(), v.end());
     return ret;
 }
 
-void flatten2dvec2array(vector<vector<dtype>> inp, dtype *inp_arr){
+void flatten2dvec2array(vector<vector<dtype>> inp, dtype* inp_arr)
+{
 	vector<dtype> flat_inp = flatten(inp);
 	int size = flat_inp.size();
-	for (int i = 0; i < size; i++) {
+	for(int i = 0; i < size; i++)
+	{
 		inp_arr[i] = flat_inp[i];
-  }
+	}
 }
 
-void flatten1dvec2array(vector<dtype> inp, dtype *inp_arr){
+void flatten1dvec2array(vector<dtype> inp, dtype* inp_arr)
+{
 	int size = inp.size();
-	for (int i = 0; i < size; i++) {
+	for(int i = 0; i < size; i++)
+	{
 		inp_arr[i] = inp[i];
-  }
+	}
 }
 
-string toString(int &i){
+string toString(int &i)
+{
    stringstream ss;
    ss << i;
    return ss.str();
 }
+
 // THIS IS WHERE I WANT TO CAST float to dtype
-vector<vector<dtype>> readH5_2_vec_2d(vector<vector<dtype>> vec, const char* str, hid_t model_file){
+vector<vector<dtype>> readH5_2_vec_2d(vector<vector<dtype>> vec, const char* str, hid_t model_file)
+{
 	int m = vec.size();
 	int n = vec[0].size();
 	float x[m][n];
 	const hid_t id = H5Dopen2(model_file, str, H5P_DEFAULT);
 	H5Dread(id, H5T_NATIVE_FLOAT, H5S_ALL, H5S_ALL, H5P_DEFAULT, x);
 	H5Dclose(id);
-	for(int i = 0; i < m; i++){
-		for(int j = 0; j < n; j++){
+	for(int i = 0; i < m; i++)
+	{
+		for(int j = 0; j < n; j++)
+		{
 			vec[i][j] = x[i][j];
 		}
 	}
 	return vec;
 }
+
 // THIS IS WHERE I WANT TO CAST float to dtype
-vector<dtype> readH5_2_vec_1d(vector<dtype> vec, const char* str, hid_t model_file){
+vector<dtype> readH5_2_vec_1d(vector<dtype> vec, const char* str, hid_t model_file)
+{
 	int m = vec.size();
 	float x[m];
 	const hid_t id = H5Dopen2(model_file, str, H5P_DEFAULT);
 	H5Dread(id, H5T_NATIVE_FLOAT, H5S_ALL, H5S_ALL, H5P_DEFAULT, x);
 	H5Dclose(id);
-	for(int i = 0; i < m; i++){
-			vec[i] = x[i];
+	for(int i = 0; i < m; i++)
+	{
+		vec[i] = x[i];
 	}
 	return vec;
 }
 
-void load_model() {
+void load_model()
+{
 	const hid_t model_file = H5Fopen(MODEL_FILE, H5F_ACC_RDONLY, H5P_DEFAULT);
 
 	RM_WEIGHT_0_VEC = readH5_2_vec_2d(RM_WEIGHT_0_VEC, "relational_model.layers.0.weight", model_file);
@@ -193,7 +206,7 @@ void load_model() {
 
 	H5Fclose(model_file);
 
-  flatten2dvec2array(RM_WEIGHT_0_VEC, RM_WEIGHT_0);
+	flatten2dvec2array(RM_WEIGHT_0_VEC, RM_WEIGHT_0);
 	flatten2dvec2array(RM_WEIGHT_2_VEC, RM_WEIGHT_2);
 	flatten2dvec2array(RM_WEIGHT_4_VEC, RM_WEIGHT_4);
 	flatten2dvec2array(RM_WEIGHT_6_VEC, RM_WEIGHT_6);
@@ -208,35 +221,43 @@ void load_model() {
 	flatten1dvec2array(OM_BIAS_2_VEC, OM_BIAS_2);
 	flatten1dvec2array(OM_BIAS_4_VEC, OM_BIAS_4);
 }
+
 // THIS IS WHERE I WANT TO CAST float to dtype
 vector<vector<dtype>> load_data(hid_t data_file, string sec, int data_len)
 {
-    //cout << "hi 1 \n \n";
-		const hid_t id0 = H5Dopen2(data_file, (sec + "_shape_0").c_str(), H5P_DEFAULT);
-		H5Dread(id0, H5T_NATIVE_INT, H5S_ALL, H5S_ALL, H5P_DEFAULT, data_idx_m);
-		H5Dclose(id0);
-    //cout << "hi 2 \n \n";
-		const hid_t id1 = H5Dopen2(data_file, (sec + "_shape_1").c_str(), H5P_DEFAULT);
-		H5Dread(id1, H5T_NATIVE_INT, H5S_ALL, H5S_ALL, H5P_DEFAULT, data_idx_n);
-		H5Dclose(id1);
-    //cout << "hi 3 \n \n";
-		vector<vector<dtype>> dat;
-		int m = data_idx_m[0];
-		int n = data_idx_n[0];
-		dat.resize(m);
-    //cout << "hi 4 \n \n";
-		float dat_temp[m][n];
-		string text = sec;
-		const hid_t id = H5Dopen2(data_file, text.c_str(), H5P_DEFAULT);
-		H5Dread(id, H5T_NATIVE_FLOAT, H5S_ALL, H5S_ALL, H5P_DEFAULT, dat_temp);
-		H5Dclose(id);
-    //cout << "hi 5 \n \n";
-		for(int j = 0; j < m; j++){
-			dat[j].resize(n);
-			for(int k = 0; k < n; k++){
-				dat[j][k] = dat_temp[j][k];
-			}
+	// cout << "hi 1 \n \n";
+	const hid_t id0 = H5Dopen2(data_file, (sec + "_shape_0").c_str(), H5P_DEFAULT);
+	H5Dread(id0, H5T_NATIVE_INT, H5S_ALL, H5S_ALL, H5P_DEFAULT, data_idx_m);
+	H5Dclose(id0);
+
+	// cout << "hi 2 \n \n";
+	const hid_t id1 = H5Dopen2(data_file, (sec + "_shape_1").c_str(), H5P_DEFAULT);
+	H5Dread(id1, H5T_NATIVE_INT, H5S_ALL, H5S_ALL, H5P_DEFAULT, data_idx_n);
+	H5Dclose(id1);
+
+	// cout << "hi 3 \n \n";
+	vector<vector<dtype>> dat;
+	int m = data_idx_m[0];
+	int n = data_idx_n[0];
+	dat.resize(m);
+
+	// cout << "hi 4 \n \n";
+	float dat_temp[m][n];
+	string text = sec;
+	const hid_t id = H5Dopen2(data_file, text.c_str(), H5P_DEFAULT);
+	H5Dread(id, H5T_NATIVE_FLOAT, H5S_ALL, H5S_ALL, H5P_DEFAULT, dat_temp);
+	H5Dclose(id);
+
+	// cout << "hi 5 \n \n";
+	for(int j = 0; j < m; j++)
+	{
+		dat[j].resize(n);
+		for(int k = 0; k < n; k++)
+		{
+			dat[j][k] = dat_temp[j][k];
 		}
-    //cout << "hi 6 \n \n";
-		return dat;
+	}
+
+	// cout << "hi 6 \n \n";
+	return dat;
 }

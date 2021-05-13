@@ -2,14 +2,15 @@
 #include "CL/opencl.h"
 #include "AOCLUtils/aocl_utils.h"
 #include "utility.h"
-//#include "error_handling.hpp"
+// #include "error_handling.hpp"
 using namespace aocl_utils;
 using namespace std;
 using namespace std::chrono;
 
-#define NUM_CMD_QUEUES    16
+#define NUM_CMD_QUEUES 16
 
-void createKernel(string kernel_name){
+void createKernel(string kernel_name)
+{
     // error code returned from api calls
     cl_int err;
     // create kernel and check for errors
@@ -17,17 +18,22 @@ void createKernel(string kernel_name){
     checkErr(err, __LINE__);
 }
 
-void initializeOpenCLParameters(){
+void initializeOpenCLParameters()
+{
     cl_int err;
-    if(!setCwdToExeDir()) {
-	exit(1);
+    if(!setCwdToExeDir())
+	{
+		exit(1);
     }
+
     // Get the OpenCL platform.
     platform = findPlatform("Intel(R) FPGA");
-    if(platform == NULL) {
-      std::cerr << "ERROR: FPGA platform not found." << std::endl;
-      exit(1);
+    if(platform == NULL)
+	{
+		std::cerr << "ERROR: FPGA platform not found." << std::endl;
+		exit(1);
     }
+
     // Query the available OpenCL devices.
     scoped_array<cl_device_id> devices;
     cl_uint num_devices;
@@ -65,21 +71,14 @@ void initializeOpenCLParameters(){
     createKernel("aggregate_cat");
 }
 
-void cleanup() {
-  for (const auto & kernel : kernels) {
-      if (kernel.second != 0)
-          clReleaseKernel(kernel.second);
-  }
-  if(program) {
-    clReleaseProgram(program);
-  }
-  if(queue1) {
-    clReleaseCommandQueue(queue1);
-  }
-  if(queue2) {
-    clReleaseCommandQueue(queue2);
-  }
-  if(context) {
-    clReleaseContext(context);
-  }
+void cleanup()
+{
+	for(const auto & kernel : kernels)
+	{
+		if(kernel.second != 0) clReleaseKernel(kernel.second);
+	}
+	if(program) clReleaseProgram(program);
+	if(queue1) clReleaseCommandQueue(queue1);
+	if(queue2) clReleaseCommandQueue(queue2);
+	if(context) clReleaseContext(context);
 }
