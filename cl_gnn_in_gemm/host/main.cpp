@@ -6,7 +6,7 @@ using namespace std::chrono;
 float avg(float* in, int size)
 {
 	float out = 0.0f;
-	for(int i = 0; i<size; i++)
+	for(int i = 0; i < size; i++)
 	{
 		out += in[i];
 	}
@@ -18,7 +18,7 @@ float var(float* in, int size)
 {
 	float mean = avg(in, size);
 	float out = 0.0f;
-	for(int i = 0; i<size; i++)
+	for(int i = 0; i < size; i++)
 	{
 		out += (in[i] - mean) * (in[i] - mean);
 	}
@@ -42,13 +42,14 @@ int main(int argc, char** argv)
 	float elapsed_times[data_len];
 	float durations[data_len];
 	float elapsed_time;
+	if(print_bool >= 1)
+		cout << "\n---------------------------------------------------\n" << endl;
 	for(int i = 0; i < data_len; i++)
 	{
 		// load data
 		string i_char = string(DATA_FILE) + "/" + to_string(i) + ".hdf5";
-		cout << i_char << "\n \n \n \n";
+		if(print_bool >= 1) cout << i_char << "\n";
 		const char* DATA_FILE_i = i_char.c_str();
-		cout << DATA_FILE_i << "\n \n \n \n";
 		const hid_t data_file = H5Fopen(DATA_FILE_i, H5F_ACC_RDONLY, H5P_DEFAULT);
 		string sec = "obj";
 		vector<vector<dtype>> obj = load_data(data_file, sec, data_len);
@@ -68,9 +69,11 @@ int main(int argc, char** argv)
 		float duration = duration_cast<microseconds>(stop - start).count();
 		elapsed_times[i] = elapsed_time;
 		durations[i] = duration;
+		if(print_bool >= 1)
+			cout << "\n---------------------------------------------------\n" << endl;
 	}
 
-	if(print_bool == 0)
+	if(print_bool >= 0)
 	{
 		float avg_duration = avg(durations, data_len);
 		float var_duration = var(durations, data_len);
@@ -78,8 +81,8 @@ int main(int argc, char** argv)
 		float var_elapsed_time = var(elapsed_times, data_len);
 		cout << "Time taken by device (avg): Total -- (per event) == " << avg_duration << " microsecs \n";
 		cout << "Time taken by device (var): Total -- (per event) == " << var_duration << " microsecs \n";
-		cout << "Time taken by device (avg): FPGA  -- (per event) == " << avg_elapsed_time << " microsecs \n";
-		cout << "Time taken by device (var): FPGA  -- (per event) == " << var_elapsed_time << " microsecs \n";
+		cout << "Time taken by device (avg): FPGA -- (per event) == " << avg_elapsed_time << " microsecs \n";
+		cout << "Time taken by device (var): FPGA -- (per event) == " << var_elapsed_time << " microsecs \n";
 	}
 
 	// cleanup

@@ -100,16 +100,17 @@ vector<vector<dtype>> ndr_forward(
 	out_h = RM_WEIGHT_6_VEC[0].size();
 	auto stop = high_resolution_clock::now();
 	auto duration = duration_cast<microseconds>(stop - start);
-	cout << "Time taken CPU 1 (define ints): " << duration.count() << " microsecs \n";
+	if(print_bool >= 1)
+		cout << "Time taken CPU 1 (define ints): " << duration.count() << " microsecs \n";
 
 	start = high_resolution_clock::now();
-	cl_mem BUF_RM_WEIGHT_0 = create_intermediate_buffer(RM_WEIGHT_0, RM_w0*RM_WEIGHT_0_VEC.size(), status);
-	cl_mem BUF_RM_WEIGHT_2 = create_intermediate_buffer(RM_WEIGHT_2, RM_w2*RM_WEIGHT_2_VEC.size(), status);
-	cl_mem BUF_RM_WEIGHT_4 = create_intermediate_buffer(RM_WEIGHT_4, RM_w4*RM_WEIGHT_4_VEC.size(), status);
-	cl_mem BUF_RM_WEIGHT_6 = create_intermediate_buffer(RM_WEIGHT_6, RM_w6*RM_WEIGHT_6_VEC.size(), status);
-	cl_mem BUF_OM_WEIGHT_0 = create_intermediate_buffer(OM_WEIGHT_0, OM_w0*OM_WEIGHT_0_VEC.size(), status);
-	cl_mem BUF_OM_WEIGHT_2 = create_intermediate_buffer(OM_WEIGHT_2, OM_w2*OM_WEIGHT_2_VEC.size(), status);
-	cl_mem BUF_OM_WEIGHT_4 = create_intermediate_buffer(OM_WEIGHT_4, OM_w4*OM_WEIGHT_4_VEC.size(), status);
+	cl_mem BUF_RM_WEIGHT_0 = create_intermediate_buffer(RM_WEIGHT_0, RM_w0 * RM_WEIGHT_0_VEC.size(), status);
+	cl_mem BUF_RM_WEIGHT_2 = create_intermediate_buffer(RM_WEIGHT_2, RM_w2 * RM_WEIGHT_2_VEC.size(), status);
+	cl_mem BUF_RM_WEIGHT_4 = create_intermediate_buffer(RM_WEIGHT_4, RM_w4 * RM_WEIGHT_4_VEC.size(), status);
+	cl_mem BUF_RM_WEIGHT_6 = create_intermediate_buffer(RM_WEIGHT_6, RM_w6 * RM_WEIGHT_6_VEC.size(), status);
+	cl_mem BUF_OM_WEIGHT_0 = create_intermediate_buffer(OM_WEIGHT_0, OM_w0 * OM_WEIGHT_0_VEC.size(), status);
+	cl_mem BUF_OM_WEIGHT_2 = create_intermediate_buffer(OM_WEIGHT_2, OM_w2 * OM_WEIGHT_2_VEC.size(), status);
+	cl_mem BUF_OM_WEIGHT_4 = create_intermediate_buffer(OM_WEIGHT_4, OM_w4 * OM_WEIGHT_4_VEC.size(), status);
 	cl_mem BUF_RM_BIAS_0 = create_intermediate_buffer(RM_BIAS_0, RM_BIAS_0_VEC.size(), status);
 	cl_mem BUF_RM_BIAS_2 = create_intermediate_buffer(RM_BIAS_2, RM_BIAS_2_VEC.size(), status);
 	cl_mem BUF_RM_BIAS_4 = create_intermediate_buffer(RM_BIAS_4, RM_BIAS_4_VEC.size(), status);
@@ -119,7 +120,8 @@ vector<vector<dtype>> ndr_forward(
 	cl_mem BUF_OM_BIAS_4 = create_intermediate_buffer(OM_BIAS_4, OM_BIAS_4_VEC.size(), status);
 	stop = high_resolution_clock::now();
 	duration = duration_cast<microseconds>(stop - start);
-	cout << "Time taken CPU 2 (create intermediate buffers): " << duration.count() << " microsecs \n";
+	if(print_bool >= 1)
+		cout << "Time taken CPU 2 (create intermediate buffers): " << duration.count() << " microsecs \n";
 
 	start = high_resolution_clock::now();
 	dtype obj_arr[obj_w * obj_h];
@@ -146,7 +148,8 @@ vector<vector<dtype>> ndr_forward(
 	dtype OM_x2[aggregate_h * OM_w2];
 	stop = high_resolution_clock::now();
 	duration = duration_cast<microseconds>(stop - start);
-	cout << "Time taken CPU 3 (define dtypes/cl_halfs): " << duration.count() << " microsecs \n";
+	if(print_bool >= 1)
+		cout << "Time taken CPU 3 (define dtypes/cl_halfs): " << duration.count() << " microsecs \n";
 
 	start = high_resolution_clock::now();
 	flatten2dvec2array(obj, obj_arr);
@@ -155,44 +158,45 @@ vector<vector<dtype>> ndr_forward(
 	flatten2dvec2array(ri, ri_arr);
 	stop = high_resolution_clock::now();
 	duration = duration_cast<microseconds>(stop - start);
-	cout << "Time taken CPU 4 (flatten2dvec2arrays): " << duration.count() << " microsecs \n";
+	if(print_bool >= 1)
+		cout << "Time taken CPU 4 (flatten2dvec2arrays): " << duration.count() << " microsecs \n";
 
 	start = high_resolution_clock::now();
 	cl_int status;
-	BUF_obj_arr = create_intermediate_buffer(obj_arr, obj_w*obj_h, status);
-	BUF_obj_arr_t = create_intermediate_buffer(obj_arr_t, obj_w*obj_h, status);
-	BUF_sr_arr = create_intermediate_buffer(sr_arr, pred_h*sender_h, status);
-	BUF_sender_arr = create_intermediate_buffer(sender_arr, pred_w*sender_h, status);
-	BUF_rr_arr = create_intermediate_buffer(rr_arr, pred_h*receiver_h, status);
-	BUF_ri_arr = create_intermediate_buffer(ri_arr, ri_w*ri_h, status);
-	BUF_receiver_arr = create_intermediate_buffer(receiver_arr, pred_w*receiver_h, status);
-	BUF_effect_receiver_arr = create_intermediate_buffer(effect_receiver_arr, rr_w*effect_h, status);
-	BUF_effect_receiver_arr_t = create_intermediate_buffer(effect_receiver_arr_t, effect_receiver_w*effect_receiver_h, status);
-	BUF_predict_arr = create_intermediate_buffer(predict_arr, pred_h*pred_w, status);
-	BUF_agg_arr = create_intermediate_buffer(agg_arr, aggregate_w*aggregate_h, status);
-	BUF_inf_arr = create_intermediate_buffer(inf_arr, pred_h*pred_w, status);
-	BUF_interaction_term_arr = create_intermediate_buffer(interaction_term_arr, term_w*term_h, status);
-	BUF_effect_arr = create_intermediate_buffer(effect_arr, rr_h*effect_h, status);
-	BUF_pred_arr = create_intermediate_buffer(pred_arr, out_w*out_h, status);
-	BUF_RM_x1 = create_intermediate_buffer(RM_x1, term_h*RM_w0, status);
-	BUF_RM_x2 = create_intermediate_buffer(RM_x2, term_h*RM_w2, status);
-	BUF_RM_x4 = create_intermediate_buffer(RM_x4, term_h*RM_w4, status);
-	BUF_RM_x_arr_t = create_intermediate_buffer(RM_x_arr_t, term_w*term_h, status);
-	BUF_OM_x1 = create_intermediate_buffer(OM_x1, aggregate_h*OM_w0, status);
-	BUF_OM_x2 = create_intermediate_buffer(OM_x2, aggregate_h*OM_w2, status);
-	BUF_OM_x_arr_t = create_intermediate_buffer(OM_x_arr_t, aggregate_w*aggregate_h, status);
+	BUF_obj_arr = create_intermediate_buffer(obj_arr, obj_w * obj_h, status);
+	BUF_obj_arr_t = create_intermediate_buffer(obj_arr_t, obj_w * obj_h, status);
+	BUF_sr_arr = create_intermediate_buffer(sr_arr, pred_h * sender_h, status);
+	BUF_sender_arr = create_intermediate_buffer(sender_arr, pred_w * sender_h, status);
+	BUF_rr_arr = create_intermediate_buffer(rr_arr, pred_h * receiver_h, status);
+	BUF_ri_arr = create_intermediate_buffer(ri_arr, ri_w * ri_h, status);
+	BUF_receiver_arr = create_intermediate_buffer(receiver_arr, pred_w * receiver_h, status);
+	BUF_effect_receiver_arr = create_intermediate_buffer(effect_receiver_arr, rr_w * effect_h, status);
+	BUF_effect_receiver_arr_t = create_intermediate_buffer(effect_receiver_arr_t, effect_receiver_w * effect_receiver_h, status);
+	BUF_predict_arr = create_intermediate_buffer(predict_arr, pred_h * pred_w, status);
+	BUF_agg_arr = create_intermediate_buffer(agg_arr, aggregate_w * aggregate_h, status);
+	BUF_inf_arr = create_intermediate_buffer(inf_arr, pred_h * pred_w, status);
+	BUF_interaction_term_arr = create_intermediate_buffer(interaction_term_arr, term_w * term_h, status);
+	BUF_effect_arr = create_intermediate_buffer(effect_arr, rr_h * effect_h, status);
+	BUF_pred_arr = create_intermediate_buffer(pred_arr, out_w * out_h, status);
+	BUF_RM_x1 = create_intermediate_buffer(RM_x1, term_h * RM_w0, status);
+	BUF_RM_x2 = create_intermediate_buffer(RM_x2, term_h * RM_w2, status);
+	BUF_RM_x4 = create_intermediate_buffer(RM_x4, term_h * RM_w4, status);
+	BUF_RM_x_arr_t = create_intermediate_buffer(RM_x_arr_t, term_w * term_h, status);
+	BUF_OM_x1 = create_intermediate_buffer(OM_x1, aggregate_h * OM_w0, status);
+	BUF_OM_x2 = create_intermediate_buffer(OM_x2, aggregate_h * OM_w2, status);
+	BUF_OM_x_arr_t = create_intermediate_buffer(OM_x_arr_t, aggregate_w * aggregate_h, status);
 	stop = high_resolution_clock::now();
 	duration = duration_cast<microseconds>(stop - start);
-	cout << "Time taken CPU 5 (create intermediate buffers): " << duration.count() << " microsecs \n";
+	if(print_bool >= 1)
+		cout << "Time taken CPU 5 (create intermediate buffers): " << duration.count() << " microsecs \n";
 
+	// nn forward pass
 	*elapsed_time += transpose(queue1, BUF_obj_arr, BUF_obj_arr_t, obj_w, obj_h);
 	clFlush(queue1);
-
 	*elapsed_time += buf_fastMatMul(queue1, BUF_obj_arr_t, BUF_sr_arr, BUF_sender_arr, obj_t_w, obj_t_h, sender_h);
 	*elapsed_time += buf_fastMatMul(queue2, BUF_obj_arr_t, BUF_rr_arr, BUF_receiver_arr, obj_t_w, obj_t_h, receiver_h);
 	clFlush(queue1);
 	clFlush(queue2);
-
 	*elapsed_time += interaction_cat(queue1, term_w, term_h, sender_w, sender_h, receiver_w, receiver_h,
 		ri_w, ri_h, BUF_sender_arr, BUF_receiver_arr, BUF_ri_arr, BUF_interaction_term_arr);
 	*elapsed_time += relational_model(queue1, BUF_interaction_term_arr, BUF_effect_arr,
@@ -209,12 +213,10 @@ vector<vector<dtype>> ndr_forward(
 		BUF_OM_x_arr_t, BUF_OM_x1, BUF_OM_x2);
 	*elapsed_time += transpose(queue1, BUF_inf_arr, BUF_predict_arr, pred_h, pred_w);
 	clFlush(queue1);
-
 	*elapsed_time += buf_fastMatMul(queue1, BUF_predict_arr, BUF_sr_arr, BUF_sender_arr, pred_w, pred_h, sender_h);
 	*elapsed_time += buf_fastMatMul(queue2, BUF_predict_arr, BUF_rr_arr, BUF_receiver_arr, pred_w, pred_h, receiver_h);
 	clFlush(queue1);
 	clFlush(queue2);
-
 	*elapsed_time += interaction_cat(queue1, term_w, term_h, sender_w, sender_h, receiver_w, receiver_h,
 		ri_w, ri_h, BUF_sender_arr, BUF_receiver_arr, BUF_ri_arr, BUF_interaction_term_arr);
 	*elapsed_time += relational_model(queue1, BUF_interaction_term_arr, BUF_pred_arr,
@@ -230,7 +232,7 @@ vector<vector<dtype>> ndr_forward(
 
 	// if(print_bool == 1)
 	// {
-	// 	for (int j = 0; j < out_w*out_h; j++)
+	// 	for (int j = 0; j < out_w * out_h; j++)
 	// 	{
 	// 		cout << pred_arr[j] << " \n";
 	// 	}

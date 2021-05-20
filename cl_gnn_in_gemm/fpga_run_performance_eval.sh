@@ -8,5 +8,5 @@ cd bin
 aocl program acl0 gnn.aocx
 aocl program acl1 gnn.aocx
 
-echo "Pt: 2 GeV"
-./gnn_fpga /tigress/aheintz/data/model_weights_LP_2.hdf5 /tigress/aheintz/data/test_LP_2 100 1
+echo "Pt: 5 GeV"
+./gnn_fpga /tigress/et7417/data/model_weights_LP_5.hdf5 /tigress/et7417/data/test_LP_5 100 1
