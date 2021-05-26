@@ -38,40 +38,24 @@ def read_input():
 				elif len(temp_contents) == 9:
 					temp_operation = temp_contents[4][1:] + ' ' + temp_contents[5] + ' ' + temp_contents[6][:-2]
 				temp_operation_runtime = temp_contents[-2]
-				# print(temp_operation + ' runtime: ' + temp_operation_runtime + ' microseconds')
 			elif len(temp_contents) == 1:
 				files.append(file_contents[index].strip())
-				# print(file_contents[index].strip())
 			elif i % 2 == 0:
 				index_j = (j - 2 * middle_buffer_lines) / 2
 				if index % 2 == 0:
-					# print('CPU overhead: ' + temp_contents[5] + ' microseconds')
 					cpu_overhead_time[index_j] += float(temp_contents[5]) / factor / num_data_files
 				elif index % 2 == 1:
-					# temp_kernel_name = temp_contents[0][:-1]
-					# temp_kernel_runtime = temp_contents[-2]
-					# print(temp_kernel_name + ' kernel runtime: ' + temp_kernel_runtime + ' microseconds')
 					kernel_execution_time[index_j] += float(temp_contents[-2]) / factor / num_data_files
 			elif i % 2 == 1:
 				if index % 2 == 1:
-					# print('CPU overhead: ' + temp_contents[5] + ' microseconds')
 					cpu_overhead_time[index_j] += float(temp_contents[5]) / factor / num_data_files
 				elif index % 2 == 0:
-					# temp_kernel_name = temp_contents[0][:-1]
-					# temp_kernel_runtime = temp_contents[-2]
-					# print(temp_kernel_name + ' kernel runtime: ' + temp_kernel_runtime + ' microseconds')
 					kernel_execution_time[index_j] += float(temp_contents[-2]) / factor / num_data_files
-
-		# print('-------------------------------------------------')
 
 	avg_var_per_event_time.append(float(file_contents[-4].strip().split()[-2]) / factor)
 	avg_var_per_event_time.append(float(file_contents[-3].strip().split()[-2]) / factor)
 	avg_var_per_event_time.append(float(file_contents[-2].strip().split()[-2]) / factor)
 	avg_var_per_event_time.append(float(file_contents[-1].strip().split()[-2]) / factor)
-	# print('Total per event, avg: ' + file_contents[-4].strip().split()[-2] + ' microseconds')
-	# print('Total per event, var: ' + file_contents[-3].strip().split()[-2] + ' microseconds')
-	# print('FPGA per event, avg: ' + file_contents[-2].strip().split()[-2] + ' microseconds')
-	# print('FPGA per event, var: ' + file_contents[-1].strip().split()[-2] + ' microseconds')
 
 	return files, nn_cpu_operation, nn_cpu_time, cpu_overhead_time, kernel_name, kernel_execution_time, avg_var_per_event_time
 
